@@ -1,0 +1,24 @@
+server:
+  port: 8085
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/elastic-db
+    driver-class-name: org.postgresql.Driver
+    username: egor
+    password: fusion
+
+  elasticsearch:
+    uris: localhost:9200
+#    username: elastic
+#    password: fusion
+#    xpack.security.enabled: true
+#    ssl:
+#      verification-mode: none
+#    repositories.enabled: true
+
+
