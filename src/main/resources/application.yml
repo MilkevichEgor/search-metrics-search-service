@@ -4,8 +4,8 @@ server:
 spring:
   servlet:
     multipart:
-      max-file-size: 500MB
-      max-request-size: 500MB
+      max-file-size: 700MB
+      max-request-size: 700MB
   datasource:
     url: jdbc:postgresql://localhost:5432/elastic-db
     driver-class-name: org.postgresql.Driver
@@ -14,9 +14,9 @@ spring:
 
   elasticsearch:
     uris: localhost:9200
-#    username: elastic
-#    password: fusion
-#    xpack.security.enabled: true
+    username: elastic
+    password: fusion
+    xpack.security.enabled: true
 #    ssl:
 #      verification-mode: none
 #    repositories.enabled: true
