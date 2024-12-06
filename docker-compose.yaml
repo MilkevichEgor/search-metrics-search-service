@@ -1,14 +1,14 @@
 services:
 
   elastic:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.22
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.16.1
     container_name: elastic
     environment:
     - discovery.type=single-node
 ##    - bootstrap.memory_lock=true
-#    - xpack.security.enabled=false
-##    - ES_JAVA_OPTS=-Xmx2g -Xms2g
-#    - ELASTIC_PASSWORD=fusion
+    - xpack.security.enabled=true
+    - ES_JAVA_OPTS=-Xmx2g -Xms2g
+    - ELASTIC_PASSWORD=fusion
     ports:
       - "9200:9200"
 

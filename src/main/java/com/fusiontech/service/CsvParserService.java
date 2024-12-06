@@ -11,7 +11,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.csv.CSVFormat;
@@ -26,9 +27,17 @@ import org.springframework.web.multipart.MultipartFile;
 @Log4j2
 public class CsvParserService {
 
-  //  private final ExecutorService executor = Executors.newFixedThreadPool(10);
+  private final ExecutorService executor = Executors.newFixedThreadPool(4);
   private final AddressDataElasticsearchRepository addressDataElasticsearchRepository;
   private final Path uploadDir = Paths.get("./src/main/resources/uploads");
+
+  public void uploadFiles(List<MultipartFile> multipartFiles) {
+	multipartFiles.forEach(file -> {
+	  String filePath = saveFile(file);
+	  processFileAsync(filePath);
+	});
+	log.info("All files have been queued for processing.");
+  }
 
   public String saveFile(MultipartFile file) {
 	try {
@@ -43,17 +52,17 @@ public class CsvParserService {
 	}
   }
 
-  public void uploadFiles(List<MultipartFile> multipartFiles) {
-	multipartFiles.forEach(file -> {
-	  String filePath = saveFile(file);
-	  processFileAsync(filePath);
-	});
-	log.info("All files have been queued for processing.");
-  }
-
   public List<AddressData> parseCsvFile(File file) {
+
+	CSVFormat format = CSVFormat.Builder.create(CSVFormat.DEFAULT)
+		.setHeader()
+		.setSkipHeaderRecord(true)
+		.build();
+
 	try (FileReader fileReader = new FileReader(file);
-		 CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT)) {
+
+		 CSVParser csvParser = new CSVParser(fileReader, format)) {
+
 	  Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 	  List<AddressData> addressList = new ArrayList<>();
 
@@ -76,26 +85,30 @@ public class CsvParserService {
   }
 
   @Async
-  public CompletableFuture<Void> processFileAsync(String filePath) {
+  public void processFileAsync(String filePath) {
 	try {
-//	  var executor = Executors.newVirtualThreadPerTaskExecutor();
-//	  var executor = Executors.newFixedThreadPool(10);
+	  log.info("Постановка в очередь файла: {}", filePath);
+//	  CompletableFuture.runAsync(() -> {
+	  executor.submit(() -> {
+		try {
+		  Thread.sleep(5000);
 
-	  CompletableFuture.runAsync(() -> {
-		File file = new File(filePath);
-		log.info("Processing file: " + file.getName());
+		  File file = new File(filePath);
 
-		long start = System.currentTimeMillis();
-		parseAndSave(file);
-		long end = System.currentTimeMillis();
-		long result = end - start;
-		log.info("Result time " + result);
+		  log.info("Обработка файла {} стартовала", filePath);
+		  parseAndSave(file);
+		  log.info("Обработка файла {} завершена", filePath);
+
+		  if (file.delete()) {
+			log.info("File {} deleted successfully", file.getName());
+		  }
+		} catch (Exception e) {
+		  log.error("Ошибка при обработке файла: " + filePath, e);
+		}
 	  });
-
 	} catch (Exception e) {
 	  log.error("Error processing file: " + filePath, e);
 	}
-	return CompletableFuture.completedFuture(null);
   }
 
   public void saveAddressesAsync(List<AddressData> addressList) {
@@ -107,7 +120,6 @@ public class CsvParserService {
 
 	int batchSize = 100000;
 	List<AddressData> addressList = parseCsvFile(csvFile);
-	log.info("addressList size {}", addressList.size());
 	List<AddressData> batch = new ArrayList<>();
 
 	for (int i = 0; i < addressList.size(); i++) {
@@ -116,10 +128,6 @@ public class CsvParserService {
 		saveAddressesAsync(new ArrayList<>(batch));
 		batch.clear();
 	  }
-	}
-	log.info("Completed processing file: " + csvFile.getName());
-	if (csvFile.delete()) {
-	  log.info("File {} deleted successfully", csvFile.getName());
 	}
   }
 }
