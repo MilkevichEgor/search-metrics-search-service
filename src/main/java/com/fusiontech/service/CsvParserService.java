@@ -88,7 +88,6 @@ public class CsvParserService {
   public void processFileAsync(String filePath) {
 	try {
 	  log.info("Постановка в очередь файла: {}", filePath);
-//	  CompletableFuture.runAsync(() -> {
 	  executor.submit(() -> {
 		try {
 		  Thread.sleep(5000);
@@ -113,7 +112,6 @@ public class CsvParserService {
 
   public void saveAddressesAsync(List<AddressData> addressList) {
 	addressDataElasticsearchRepository.saveAll(addressList);
-//	log.info("Saved batch of size: " + addressList.size());
   }
 
   public void parseAndSave(File csvFile) {
