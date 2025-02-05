@@ -3,7 +3,8 @@ package com.geosearch.security.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geosearch.security.factory.DefaultAccessTokenFactory;
 import com.geosearch.security.factory.DefaultRefreshTokenFactory;
-import com.geosearch.security.model.Token;
+import com.geosearch.security.model.AccessToken;
+import com.geosearch.security.model.RefreshToken;
 import com.geosearch.security.model.Tokens;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,11 +33,11 @@ public class RequestJwtTokensFilter extends OncePerRequestFilter {
 
   private SecurityContextRepository securityContextRepository = new RequestAttributeSecurityContextRepository();
 
-  private Function<Authentication, Token> refreshTokenFactory = new DefaultRefreshTokenFactory();
-  private Function<Token, Token> accessTokenFactory = new DefaultAccessTokenFactory();
+  private Function<Authentication, RefreshToken> refreshTokenFactory = new DefaultRefreshTokenFactory();
+  private Function<RefreshToken, AccessToken> accessTokenFactory = new DefaultAccessTokenFactory();
 
-  private Function<Token, String> refreshTokenStringSerializer = Objects::toString;
-  private Function<Token, String> accessTokenStringSerializer = Objects::toString;
+  private Function<RefreshToken, String> refreshTokenStringSerializer = Objects::toString;
+  private Function<AccessToken, String> accessTokenStringSerializer = Objects::toString;
 
   private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -48,8 +49,8 @@ public class RequestJwtTokensFilter extends OncePerRequestFilter {
 	  if (this.securityContextRepository.containsContext(request)) {
 		SecurityContext contextRepository = this.securityContextRepository.loadDeferredContext(request).get();
 		if (contextRepository != null && !(contextRepository.getAuthentication() instanceof PreAuthenticatedAuthenticationToken)) {
-		  Token refreshToken = this.refreshTokenFactory.apply(contextRepository.getAuthentication());
-		  Token accessToken = this.accessTokenFactory.apply(refreshToken);
+		  RefreshToken refreshToken = this.refreshTokenFactory.apply(contextRepository.getAuthentication());
+		  AccessToken accessToken = this.accessTokenFactory.apply(refreshToken);
 
 		  response.setStatus(HttpServletResponse.SC_OK);
 		  response.setContentType(MediaType.APPLICATION_JSON_VALUE);

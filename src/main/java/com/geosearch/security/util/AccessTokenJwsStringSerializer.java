@@ -1,6 +1,6 @@
 package com.geosearch.security.util;
 
-import com.geosearch.security.model.Token;
+import com.geosearch.security.model.AccessToken;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -12,7 +12,7 @@ import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AccessTokenJwsStringSerializer implements Function<Token, String> {
+public class AccessTokenJwsStringSerializer implements Function<AccessToken, String> {
 
   private final JWSSigner jwsSigner;
   private final JWSAlgorithm jwsAlgorithm = JWSAlgorithm.HS256;
@@ -22,7 +22,7 @@ public class AccessTokenJwsStringSerializer implements Function<Token, String> {
   }
 
   @Override
-  public String apply(Token accessToken) {
+  public String apply(AccessToken accessToken) {
 	JWSHeader jwsHeader = new JWSHeader.Builder(this.jwsAlgorithm)
 		.keyID(accessToken.id().toString())
 		.build();

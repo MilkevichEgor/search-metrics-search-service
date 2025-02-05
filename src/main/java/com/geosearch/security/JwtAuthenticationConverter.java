@@ -1,6 +1,7 @@
 package com.geosearch.security;
 
-import com.geosearch.security.model.Token;
+import com.geosearch.security.model.AccessToken;
+import com.geosearch.security.model.RefreshToken;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -12,21 +13,21 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 @RequiredArgsConstructor
 public class JwtAuthenticationConverter implements AuthenticationConverter {
 
-  private final Function<String, Token> accessTokenStringDeserializer;
-  private final Function<String, Token> refreshTokenStringDeserializer;
+  private final Function<String, AccessToken> accessTokenStringDeserializer;
+  private final Function<String, RefreshToken> refreshTokenStringDeserializer;
 
   @Override
   public Authentication convert(HttpServletRequest request) {
 	String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 	if (authorization != null && authorization.startsWith("Bearer ")) {
 	  String token = authorization.substring(7, authorization.length()).trim();
-	  Token accessToken = this.accessTokenStringDeserializer.apply(token);
+	  AccessToken accessToken = this.accessTokenStringDeserializer.apply(token);
 
 	  if (accessToken != null) {
 		return new PreAuthenticatedAuthenticationToken(accessToken, token);
 	  }
 
-	  Token refreshToken = this.refreshTokenStringDeserializer.apply(token);
+	  RefreshToken refreshToken = this.refreshTokenStringDeserializer.apply(token);
 	  if (refreshToken != null) {
 		return new PreAuthenticatedAuthenticationToken(refreshToken, token);
 	  }
