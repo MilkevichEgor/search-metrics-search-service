@@ -1,15 +1,14 @@
-package com.fusiontech.repository;
+package com.geosearch.repository;
 
-import com.fusiontech.entity.AddressData;
+import com.geosearch.entity.AddressData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 public interface AddressDataElasticsearchRepository extends ElasticsearchRepository<AddressData, String> {
 //  Page<AddressData> findAll(Pageable pageable);
 
-//  @Query("""
+  //  @Query("""
 //    {
 //        "bool": {
 //            "should": [
@@ -31,4 +30,7 @@ public interface AddressDataElasticsearchRepository extends ElasticsearchReposit
 //    """)
   Page<AddressData> getAddressDataByAddress(String address, Pageable pageable);
 
+  Page<AddressData> findByPostcode(String postcode, Pageable pageable);
+
+  void deleteById(String id);
 }
