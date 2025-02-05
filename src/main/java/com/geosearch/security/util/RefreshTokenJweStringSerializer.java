@@ -1,6 +1,6 @@
 package com.geosearch.security.util;
 
-import com.geosearch.security.model.Token;
+import com.geosearch.security.model.RefreshToken;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Setter
-public class RefreshTokenJweStringSerializer implements Function<Token, String> {
+public class RefreshTokenJweStringSerializer implements Function<RefreshToken, String> {
 
   private final JWEEncrypter jweEncrypter;
   private JWEAlgorithm jweAlgorithm = JWEAlgorithm.DIR;
@@ -34,7 +34,7 @@ public class RefreshTokenJweStringSerializer implements Function<Token, String> 
   }
 
   @Override
-  public String apply(Token refreshToken) {
+  public String apply(RefreshToken refreshToken) {
 	JWEHeader jweHeader = new JWEHeader.Builder(this.jweAlgorithm, this.encryptionMethod)
 		.keyID(refreshToken.id().toString())
 		.build();

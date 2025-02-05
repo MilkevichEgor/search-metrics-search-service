@@ -2,8 +2,9 @@ package com.geosearch.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geosearch.security.factory.DefaultAccessTokenFactory;
-import com.geosearch.security.model.Token;
-import com.geosearch.security.model.TokenUser;
+import com.geosearch.security.model.AccessToken;
+import com.geosearch.security.model.RefreshToken;
+import com.geosearch.security.model.RefreshTokenUser;
 import com.geosearch.security.model.Tokens;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,9 +32,9 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
 
   private SecurityContextRepository securityContextRepository = new RequestAttributeSecurityContextRepository();
 
-  private Function<Token, Token> accessTokenFactory = new DefaultAccessTokenFactory();
+  private Function<RefreshToken, AccessToken> accessTokenFactory = new DefaultAccessTokenFactory();
 
-  private Function<Token, String> accessTokenStringSerializer = Object::toString;
+  private Function<AccessToken, String> accessTokenStringSerializer = Object::toString;
 
   private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -44,10 +45,10 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
 	  if (this.securityContextRepository.containsContext(request)) {
 		SecurityContext context = this.securityContextRepository.loadDeferredContext(request).get();
 		if (context != null && context.getAuthentication() instanceof PreAuthenticatedAuthenticationToken &&
-			context.getAuthentication().getPrincipal() instanceof TokenUser user &&
+			context.getAuthentication().getPrincipal() instanceof RefreshTokenUser user &&
 			context.getAuthentication().getAuthorities()
 				.contains(new SimpleGrantedAuthority("JWT_REFRESH"))) {
-		  var accessToken = this.accessTokenFactory.apply(user.getToken());
+		  var accessToken = this.accessTokenFactory.apply(user.getRefreshToken());
 
 		  response.setStatus(HttpServletResponse.SC_OK);
 		  response.setContentType(MediaType.APPLICATION_JSON_VALUE);

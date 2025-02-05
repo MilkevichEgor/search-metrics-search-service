@@ -2,7 +2,7 @@ package com.geosearch.security.filter;
 
 import com.geosearch.entity.InactiveToken;
 import com.geosearch.repository.InactiveTokenRepository;
-import com.geosearch.security.model.TokenUser;
+import com.geosearch.security.model.RefreshTokenUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,8 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,12 +36,12 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
 	  if (this.securityContextRepository.containsContext(request)) {
 		SecurityContext context = this.securityContextRepository.loadDeferredContext(request).get();
 		if (context != null && context.getAuthentication() instanceof PreAuthenticatedAuthenticationToken &&
-			context.getAuthentication().getPrincipal() instanceof TokenUser user &&
+			context.getAuthentication().getPrincipal() instanceof RefreshTokenUser user &&
 			context.getAuthentication().getAuthorities()
 				.contains(new SimpleGrantedAuthority("JWT_LOGOUT"))) {
 
-		  LocalDateTime localDateTime = LocalDateTime.ofInstant(user.getToken().expiresAt(), ZoneId.systemDefault());
-		  inactiveTokenRepository.save(new InactiveToken(localDateTime));
+		  LocalDateTime localDateTime = LocalDateTime.ofInstant(user.getRefreshToken().expiresAt(), ZoneId.systemDefault());
+		  inactiveTokenRepository.save(new InactiveToken(user.getRefreshToken().id(), localDateTime));
 
 		  response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 		  return;

@@ -1,6 +1,6 @@
 package com.geosearch.security.factory;
 
-import com.geosearch.security.model.Token;
+import com.geosearch.security.model.RefreshToken;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedList;
@@ -12,12 +12,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 @Setter
-public class DefaultRefreshTokenFactory implements Function<Authentication, Token> {
+public class DefaultRefreshTokenFactory implements Function<Authentication, RefreshToken> {
 
   private Duration tokenTtl = Duration.ofDays(1);
 
   @Override
-  public Token apply(Authentication authentication) {
+  public RefreshToken apply(Authentication authentication) {
 	List<String> authorities = new LinkedList<>();
 	authorities.add("JWT_REFRESH");
 	authorities.add("JWT_LOGOUT");
@@ -28,6 +28,6 @@ public class DefaultRefreshTokenFactory implements Function<Authentication, Toke
 		.forEach(authorities::add);
 
 	Instant now = Instant.now();
-	return new Token(UUID.randomUUID(), authentication.getName(), authorities, now, now.plus(this.tokenTtl));
+	return new RefreshToken(UUID.randomUUID(), authentication.getName(), authorities, now, now.plus(this.tokenTtl));
   }
 }

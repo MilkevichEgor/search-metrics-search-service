@@ -33,3 +33,7 @@ spring:
 jwt:
   access-token-key: '{"kty":"oct","k":"6YMCIKgkIE5agQ5E_Zf4NISKEY8xPygJn0VdukQ3OZQ"}'
   refresh-token-key: '{"kty":"oct","k":"JmSDS3J_yKDe7ZW6hoWmJ7iLAnm9FzvU"}'
+
+logging:
+  level:
+    org.springframework.security: trace

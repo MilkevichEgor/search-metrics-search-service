@@ -4,7 +4,8 @@ import com.geosearch.repository.InactiveTokenRepository;
 import com.geosearch.security.filter.JwtLogoutFilter;
 import com.geosearch.security.filter.RefreshTokenFilter;
 import com.geosearch.security.filter.RequestJwtTokensFilter;
-import com.geosearch.security.model.Token;
+import com.geosearch.security.model.AccessToken;
+import com.geosearch.security.model.RefreshToken;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 import java.util.function.Function;
@@ -22,11 +23,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthenticationConfigurer, HttpSecurity> {
 
-  private Function<Token, String> refreshTokenStringSerializer = Objects::toString;
-  private Function<Token, String> accessTokenStringSerializer = Objects::toString;
+  private Function<RefreshToken, String> refreshTokenStringSerializer = Objects::toString;
+  private Function<AccessToken, String> accessTokenStringSerializer = Objects::toString;
 
-  private Function<String, Token> accessTokenStringDeserializer;
-  private Function<String, Token> refreshTokenStringDeserializer;
+  private Function<String, AccessToken> accessTokenStringDeserializer;
+  private Function<String, RefreshToken> refreshTokenStringDeserializer;
 
   private InactiveTokenRepository inactiveTokenRepository;
 
@@ -66,22 +67,22 @@ public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthe
 		.authenticationProvider(authenticationProvider);
   }
 
-  public JwtAuthenticationConfigurer refreshTokenStringSerializer(Function<Token, String> refreshTokenStringSerializer) {
+  public JwtAuthenticationConfigurer refreshTokenStringSerializer(Function<RefreshToken, String> refreshTokenStringSerializer) {
 	this.refreshTokenStringSerializer = refreshTokenStringSerializer;
 	return this;
   }
 
-  public JwtAuthenticationConfigurer accessTokenStringSerializer(Function<Token, String> accessTokenStringSerializer) {
+  public JwtAuthenticationConfigurer accessTokenStringSerializer(Function<AccessToken, String> accessTokenStringSerializer) {
 	this.accessTokenStringSerializer = accessTokenStringSerializer;
 	return this;
   }
 
-  public JwtAuthenticationConfigurer accessTokenStringDeserializer(Function<String, Token> accessTokenStringDeserializer) {
+  public JwtAuthenticationConfigurer accessTokenStringDeserializer(Function<String, AccessToken> accessTokenStringDeserializer) {
 	this.accessTokenStringDeserializer = accessTokenStringDeserializer;
 	return this;
   }
 
-  public JwtAuthenticationConfigurer refreshTokenStringDeserializer(Function<String, Token> refreshTokenStringDeserializer) {
+  public JwtAuthenticationConfigurer refreshTokenStringDeserializer(Function<String, RefreshToken> refreshTokenStringDeserializer) {
 	this.refreshTokenStringDeserializer = refreshTokenStringDeserializer;
 	return this;
   }
