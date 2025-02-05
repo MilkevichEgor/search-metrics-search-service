@@ -1,4 +1,4 @@
-package com.fusiontech.entity;
+package com.geosearch.entity;
 
 import java.util.UUID;
 import lombok.AllArgsConstructor;

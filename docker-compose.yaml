@@ -9,12 +9,13 @@ services:
     - xpack.security.enabled=true
     - ES_JAVA_OPTS=-Xmx2g -Xms2g
     - ELASTIC_PASSWORD=fusion
+    - cluster.routing.allocation.disk.threshold_enabled=false
     ports:
       - "9200:9200"
 
   kibana:
     container_name: kibana
-    image: kibana:8.16.1
+    image: kibana:8.17.1
     volumes:
       - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
@@ -27,11 +28,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - search_service_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: egor
       POSTGRES_PASSWORD: fusion
-      POSTGRES_DB: elastic-db
+      POSTGRES_DB: search-service-db
     healthcheck:
       test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
       interval: 10s
@@ -39,7 +40,8 @@ services:
       start_period: 10s
       retries: 5
 volumes:
-  postgres_data:
+  search_service_data:
+#  kafka_data:
 
 
 

@@ -8,10 +8,10 @@
         <version>3.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.fusiontech</groupId>
-    <artifactId>elasticsearch-test</artifactId>
+    <groupId>com.geosearch</groupId>
+    <artifactId>search-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>elasticsearch-test</name>
+    <name>search-service</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>23</java.version>
@@ -32,6 +32,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>9.31</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <dependency>
