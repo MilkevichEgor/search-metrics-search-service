@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+spring:
+  #  docker:
+  #    compose:
+  #      enabled: true
+  #      file: docker-compose.yaml
+  servlet:
+    multipart:
+      max-file-size: 700MB
+      max-request-size: 700MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/search-service-db
+    driver-class-name: org.postgresql.Driver
+    username: egor
+    password: fusion
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  kafka:
+    bootstrap-servers: localhost:29092
+
+  elasticsearch:
+    uris: localhost:9200
+    username: elastic
+    password: fusion
+    xpack.security.enabled: true
+    connection-timeout: 20000  # Увеличение таймаута для подключения
+    read-timeout: 60000
+  #    ssl:
+  #      verification-mode: none
+  #    repositories.enabled: true
+
+upload:
+  file:
+    path: ./src/main/resources/uploads
+
+jwt:
+  access-token-key: '{"kty":"oct","k":"6YMCIKgkIE5agQ5E_Zf4NISKEY8xPygJn0VdukQ3OZQ"}'
+  refresh-token-key: '{"kty":"oct","k":"JmSDS3J_yKDe7ZW6hoWmJ7iLAnm9FzvU"}'
+
+logging:
+#  level:
+#    org.springframework: DEBUG
+#    org.springframework.security: trace
