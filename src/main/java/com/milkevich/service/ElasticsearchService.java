@@ -6,6 +6,7 @@ import com.milkevich.dto.request.AnalyticRequest;
 import com.milkevich.dto.request.SearchByAddressRequest;
 import com.milkevich.dto.request.SearchByPostcodeRequest;
 import com.milkevich.entity.AddressData;
+import com.milkevich.exception.AddressDataNotFoundException;
 import com.milkevich.repository.AddressDataElasticsearchRepository;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,11 @@ public class ElasticsearchService {
 
   public Page<AddressData> getAll(Pageable pageable) {
 	return addressDataElasticsearchRepository.findAll(pageable);
+  }
+
+  public AddressData getOneById(String id) {
+	return addressDataElasticsearchRepository.findById(id).orElseThrow(() ->
+		new AddressDataNotFoundException("Address Data with id %s, not found".formatted(id)));
   }
 
   @Transactional

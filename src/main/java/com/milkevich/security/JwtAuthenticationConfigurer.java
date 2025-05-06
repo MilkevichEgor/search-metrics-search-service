@@ -40,7 +40,7 @@ public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthe
   }
 
   @Override
-  public void configure(HttpSecurity builder) throws Exception {
+  public void configure(HttpSecurity builder) {
 	RequestJwtTokensFilter requestJwtTokensFilter = new RequestJwtTokensFilter();
 	requestJwtTokensFilter.setAccessTokenStringSerializer(this.accessTokenStringSerializer);
 	requestJwtTokensFilter.setRefreshTokenStringSerializer(this.refreshTokenStringSerializer);
@@ -50,7 +50,7 @@ public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthe
 	jwtAuthenticationFilter.setSuccessHandler((request, response, authentication) ->
 		CsrfFilter.skipRequest(request));
 	jwtAuthenticationFilter.setFailureHandler((request, response, exception) ->
-		response.sendError(HttpServletResponse.SC_FORBIDDEN));
+		response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied: "));
 
 	PreAuthenticatedAuthenticationProvider authenticationProvider = new PreAuthenticatedAuthenticationProvider();
 	authenticationProvider.setPreAuthenticatedUserDetailsService(new TokenAuthenticationUserDetailsService(this.inactiveTokenRepository));
